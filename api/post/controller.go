@@ -28,7 +28,7 @@ func (c *Controller[T]) RegisterRoutes(routerGroup *gin.RouterGroup) {
 //		@param		item	body	UpdateDto	true	"update body"
 //		@Router		/post/{id} [put]
 func (c *Controller[T]) actionUpdate(ctx *gin.Context) {
-	CrudController.Update(ctx, nil, nil)
+	c.Update(ctx, nil, nil)
 }
 
 // @Success	200	{string}	string	"ok"
@@ -36,7 +36,7 @@ func (c *Controller[T]) actionUpdate(ctx *gin.Context) {
 // @param		id	path	string	true	"uuid of item"
 // @Router		/post/{id} [delete]
 func (c *Controller[T]) actionDelete(ctx *gin.Context) {
-	CrudController.Delete(ctx, nil, nil)
+	c.Delete(ctx, nil, nil)
 }
 
 // @Success	201	{object}	model
@@ -44,7 +44,7 @@ func (c *Controller[T]) actionDelete(ctx *gin.Context) {
 // @param		{object}	body	CreateDto	true	"item to create"
 // @Router		/post [post]
 func (c *Controller[T]) actionCreate(ctx *gin.Context) {
-	CrudController.Create(ctx, nil, nil)
+	c.Create(ctx, nil, nil)
 }
 
 // @Success	200	{object}	model
@@ -52,7 +52,7 @@ func (c *Controller[T]) actionCreate(ctx *gin.Context) {
 // @param		id	path	string	true	"uuid of item"
 // @Router		/post/{id} [get]
 func (c *Controller[T]) actionGet(ctx *gin.Context) {
-	CrudController.FindOne(ctx, nil, nil)
+	c.FindOne(ctx, nil, nil)
 }
 
 // @Success	200	{array}	model
@@ -66,7 +66,7 @@ func (c *Controller[T]) actionGet(ctx *gin.Context) {
 // @param		sort	query	[]string	false	"filters eg: created_at,desc title,asc"
 // @Router		/post [get]
 func (c *Controller[T]) actionList(ctx *gin.Context) {
-	CrudController.FindAll(ctx, nil, nil)
+	c.FindAll(ctx, nil, nil)
 }
 
 func initController[T model](service *Service[T]) *Controller[T] {
