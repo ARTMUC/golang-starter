@@ -1,51 +1,18 @@
 # Go gin crud starter
 This repo could be used as a kind of inherited CRUD api, and it will save a lot of time.
 
-## story
-
-I used to handle crud operations in Nodejs with nest crud package, and it is fully compatible with react admin.
-I've never spent any time to make sorting or selecting or filtering functionalities. I was able to create
-admin dashboard in no time. When I switched to golang I missed these productive tools so I decided to create it.
-
-
-## Features
-- Full crud features
-- sorting, selecting and do complex filters like nested "and" & "or" queries
-- add joins and nested joins from uri
-- compatible with [ra-admin](https://www.radmin.com/)
-- inspired from [@nestjsx/crud](https://github.com/nestjsx/crud)
-
-## packages I am using
+## packages 
 - Gin
 - Gorm
 - Postgres
 - Air
 - Swagger
 
-Fell free to make PR to add other frameworks or ORMs
-## How to use
 
 ### clone the repo
 `git clone git@github.com:ElegantSoft/go-crud-starter.git $your-project-name`
 
 `cd $your-project-name && rm -R .git`
-
-### Configuration
-- Create `.env` file for configuration.
-- Add to it `DB_URL` as a connection string which is in used by [Gorm](https://gorm.io/docs/connecting_to_the_database.html)
-- By default `PORT` is configured on 8080, but you can specify in the `.env` file a different `PORT` if you like so.
-- If you want to have the documentation also updated then follow the next steps:
-  - Install `swaggo` with `go install github.com/swaggo/swag/cmd/swag@latest`
-  - Run in terminal `swag init` which will update the swagger files in the `docs` directory.
-
-### See examples as posts then duplicate it
-
-First you can see how crud api works by running project and go to `/docs/index.html`
-
-- duplicate posts folder
-- change package name
-- create your entity in models folder
-- replace `model` struct in `repository.go`
 
 ### requests params
 - [Query params](#query-params)
