@@ -7,8 +7,8 @@ import (
 //	@TODO	move it out of the crud package to database
 
 type Dao[T any] interface {
-	FindOne(cond interface{}, dest *T) error
-	Update(cond interface{}, updatedColumns *T) error
+	FindOne(cond *T, dest *T) error
+	Update(cond *T, updatedColumns *T) error
 	Delete(cond *T) error
 	Create(data *T) error
 	getTx() *gorm.DB
@@ -19,11 +19,11 @@ type Repository[T any] struct {
 	Model interface{}
 }
 
-func (r *Repository[T]) FindOne(cond interface{}, dest *T) error {
+func (r *Repository[T]) FindOne(cond *T, dest *T) error {
 	return r.DB.Where(cond).First(dest).Error
 }
 
-func (r *Repository[T]) Update(cond interface{}, updatedColumns *T) error {
+func (r *Repository[T]) Update(cond *T, updatedColumns *T) error {
 	return r.DB.Model(r.Model).Select("*").Where(cond).Updates(updatedColumns).Error
 }
 

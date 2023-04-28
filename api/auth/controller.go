@@ -4,14 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/common"
 	"github.com/golang-starter/domain/models"
-	"github.com/jinzhu/copier"
 	"golang.org/x/crypto/bcrypt"
 	"html"
 	"net/http"
 	"strings"
 )
 
-type Controller[T any] struct {
+type Controller[T models.User] struct {
 	userRepository models.UserRepo[T]
 }
 
@@ -27,7 +26,6 @@ func (c *Controller[T]) RegisterRoutes(routerGroup *gin.RouterGroup) {
 
 func (c *Controller[T]) register(ctx *gin.Context) {
 	var input RegisterInput
-
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -39,17 +37,12 @@ func (c *Controller[T]) register(ctx *gin.Context) {
 		return
 	}
 
-	input.Password = string(hashedPassword)
-	input.Username = html.EscapeString(strings.TrimSpace(input.Username))
-
-	var usr *T
-	err = copier.Copy(usr, input)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	user := &T{
+		Username: string(hashedPassword),
+		Password: html.EscapeString(strings.TrimSpace(input.Username)),
 	}
 
-	err = c.userRepository.Create(usr)
+	err = c.userRepository.Create(user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -71,14 +64,11 @@ func (c *Controller[T]) signin(ctx *gin.Context) {
 		return
 	}
 
-	var usr *T
-	user := &models.User{}
-	err := c.userRepository.FindOne(&models.User{Username: input.Username}, usr)
+	user, err := c.userRepository.FindOneByName(input.Username)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
 		return
 	}
-	copier.Copy(user, usr)
 
 	err = bcrypt.CompareHashAndPassword([]byte(input.Password), []byte(user.Password))
 	if err != nil {
@@ -95,7 +85,7 @@ func (c *Controller[T]) signin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-func initController[T any](userRepository models.UserRepo[T]) *Controller[T] {
+func initController[T models.User](userRepository models.UserRepo[T]) *Controller[T] {
 	return &Controller[T]{userRepository}
 }
 
