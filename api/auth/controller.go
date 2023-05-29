@@ -2,8 +2,9 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/common"
 	"github.com/golang-starter/domain/models"
+	"github.com/golang-starter/domain/repo"
+	"github.com/golang-starter/jwt"
 	"golang.org/x/crypto/bcrypt"
 	"html"
 	"net/http"
@@ -11,7 +12,7 @@ import (
 )
 
 type Controller[T models.User] struct {
-	userRepository models.UserRepo[T]
+	userRepository repo.UserRepo[T]
 }
 
 type RegisterInput struct {
@@ -76,7 +77,7 @@ func (c *Controller[T]) signin(ctx *gin.Context) {
 		return
 	}
 
-	token, err := common.GenerateToken(user.ID)
+	token, err := jwt.GenerateToken(user.ID)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "username or password is incorrect."})
 		return
@@ -85,8 +86,8 @@ func (c *Controller[T]) signin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
-func initController[T models.User](userRepository models.UserRepo[T]) *Controller[T] {
+func NewController[T models.User](userRepository repo.UserRepo[T]) *Controller[T] {
 	return &Controller[T]{userRepository}
 }
 
-var AuthController = initController[models.User](models.UserRepository)
+//var AuthController = initController[models.User](repo.UserRepository)

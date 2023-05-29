@@ -1,4 +1,4 @@
-package crud
+package baserepo
 
 import (
 	"gorm.io/gorm"
@@ -11,7 +11,7 @@ type Dao[T any] interface {
 	Update(cond *T, updatedColumns *T) error
 	Delete(cond *T) error
 	Create(data *T) error
-	getTx() *gorm.DB
+	GetTx() *gorm.DB
 }
 
 type Repository[T any] struct {
@@ -38,7 +38,7 @@ func (r *Repository[T]) Create(data *T) error {
 	return r.DB.Create(data).Error
 }
 
-func (r *Repository[T]) getTx() *gorm.DB {
+func (r *Repository[T]) GetTx() *gorm.DB {
 	return r.DB.Model(r.Model)
 }
 

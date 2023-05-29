@@ -24,12 +24,3 @@ type Category struct {
 	CreatedAt time.Time   `json:"created_at,omitempty"`
 	UserID    interface{} `json:"user_id,omitempty"`
 }
-
-func CheckCategoryUser(categoryID uuid.UUID, userID uuid.UUID) bool {
-	var category *Category
-	err := CategoryRepository.FindOne(&Category{ID: categoryID, UserID: userID}, category)
-	if err != nil {
-		return false
-	}
-	return true
-}

@@ -5,8 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/api/auth"
 	"github.com/golang-starter/api/post"
-	"github.com/golang-starter/common"
+	"github.com/golang-starter/container"
+	"github.com/golang-starter/di"
+	"github.com/golang-starter/domain/models"
+	"github.com/golang-starter/domain/repo"
 	"github.com/golang-starter/middlewares"
+	"github.com/golang-starter/validator"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
@@ -37,7 +41,7 @@ func main() {
 		server.Use(gin.Logger())
 	}
 
-	common.RegisterBindingsValidators()
+	validator.RegisterBindingsValidators()
 
 	//gin.SetMode(os.Getenv("GIN_MODE"))
 	//if err := db.Open(os.Getenv("DB_URL")); err != nil {
@@ -60,12 +64,24 @@ func main() {
 	//}
 
 	authGroup := server.Group("auth")
-	postsGroup := server.Group("post")
+	postsGroup := server.Group(post.CrudName)
 
 	postsGroup.Use(middlewares.JwtAuthMiddleware())
 
-	auth.AuthController.RegisterRoutes(authGroup)
-	post.CrudController.RegisterRoutes(postsGroup)
+	var allDependencies = [][]interface{}{
+		repo.GetProviders(),
+		post.GetProviders(),
+		auth.GetProviders(),
+	}
+
+	for _, dependencies := range allDependencies {
+		for _, dependency := range dependencies {
+			container.Container.Provide(dependency)
+		}
+	}
+	
+	di.MustGet(container.Container, &auth.Controller[models.User]{}).RegisterRoutes(authGroup)
+	di.MustGet(container.Container, &post.Controller[models.Post]{}).RegisterRoutes(postsGroup)
 
 	server.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

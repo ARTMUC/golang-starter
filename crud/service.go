@@ -2,6 +2,7 @@ package crud
 
 import (
 	"encoding/json"
+	"github.com/golang-starter/domain/baserepo"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -16,7 +17,7 @@ type Service[T any] interface {
 }
 
 type service[T any] struct {
-	Repo Dao[T]
+	Repo baserepo.Dao[T]
 	Qtb  *QueryToDBConverter
 }
 
@@ -29,7 +30,7 @@ func (svc *service[T]) FindTrx(api GetAllRequest) (error, *gorm.DB) {
 		}
 	}
 
-	tx := svc.Repo.getTx()
+	tx := svc.Repo.GetTx()
 	if len(api.Fields) > 0 {
 		fields := strings.Split(api.Fields, ",")
 		tx.Select(fields)
@@ -84,7 +85,7 @@ func (svc *service[T]) FindOne(api GetAllRequest, result interface{}) error {
 		}
 	}
 
-	tx := svc.Repo.getTx()
+	tx := svc.Repo.GetTx()
 
 	if len(api.Fields) > 0 {
 		fields := strings.Split(api.Fields, ",")
@@ -121,7 +122,7 @@ func (svc *service[T]) Update(cond *T, updatedColumns *T) error {
 	return svc.Repo.Update(cond, updatedColumns)
 }
 
-func NewService[T any](repo Dao[T]) Service[T] {
+func NewService[T any](repo baserepo.Dao[T]) Service[T] {
 	return &service[T]{
 		Repo: repo,
 		Qtb:  &QueryToDBConverter{},
