@@ -17,5 +17,3 @@ func NewService[T model](repository repo.PostRepo[T]) *Service[T] {
 		Service: crud.NewService[T](repository),
 	}
 }
-
-//var service = initService[model](repository)

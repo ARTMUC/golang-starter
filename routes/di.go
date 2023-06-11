@@ -1,8 +1,7 @@
-package post
+package routes
 
 func GetProviders() []interface{} {
 	return []interface{}{
-		NewService[model],
-		NewController[model],
+		NewRoutes,
 	}
 }

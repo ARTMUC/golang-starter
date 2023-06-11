@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/jwt"
+	"github.com/golang-starter/pkg/jwt"
 	"net/http"
 )
 

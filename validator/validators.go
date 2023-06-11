@@ -9,7 +9,7 @@ import (
 	"github.com/golang-starter/di"
 	"github.com/golang-starter/domain/models"
 	"github.com/golang-starter/domain/repo"
-	"github.com/golang-starter/jwt"
+	"github.com/golang-starter/pkg/jwt"
 	"github.com/google/uuid"
 )
 

@@ -68,6 +68,20 @@ func MustGet[T any](c DependencyContainer, t *T) *T {
 	return value.Interface().(*T)
 }
 
+func GetMany[T any](c DependencyContainer, arr []interface{}) []T {
+	var vals []T
+	for _, t := range arr {
+		val, err := c.Get(reflect.TypeOf(t))
+		if err != nil {
+			log.Fatalf("dependency not found: %v", t)
+		}
+		value := val.(reflect.Value)
+		vals = append(vals, value.Interface().(T))
+	}
+
+	return vals
+}
+
 func GetProvider[T any](c DependencyContainer, t *T) {
 	val, err := c.Get(reflect.TypeOf(t))
 	if err != nil {

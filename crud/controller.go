@@ -57,7 +57,7 @@ func (c *Controller[T]) FindAll(ctx *gin.Context, before func(api GetAllRequest)
 	if before != nil {
 		err := before(api)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -77,7 +77,7 @@ func (c *Controller[T]) FindAll(ctx *gin.Context, before func(api GetAllRequest)
 	if after != nil {
 		err := after(data)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -108,7 +108,7 @@ func (c *Controller[T]) FindOne(ctx *gin.Context, before func(api GetAllRequest)
 	if before != nil {
 		err := before(api)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -122,7 +122,7 @@ func (c *Controller[T]) FindOne(ctx *gin.Context, before func(api GetAllRequest)
 	if after != nil {
 		err := after(result)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -150,7 +150,7 @@ func (c *Controller[T]) Create(ctx *gin.Context, before func(item *T) error, aft
 	if before != nil {
 		err := before(item)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -164,7 +164,7 @@ func (c *Controller[T]) Create(ctx *gin.Context, before func(item *T) error, aft
 	if after != nil {
 		err := after(item)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -217,7 +217,7 @@ func (c *Controller[T]) Update(ctx *gin.Context, before func(item *T) error, aft
 	if before != nil {
 		err := before(item)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -231,7 +231,7 @@ func (c *Controller[T]) Update(ctx *gin.Context, before func(item *T) error, aft
 	if after != nil {
 		err := after(item)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -263,14 +263,14 @@ func (c *Controller[T]) Delete(ctx *gin.Context, before func(item *T) error, aft
 
 	err = c.service.FindOne(api, result)
 	if err != nil {
-		ctx.JSON(400, gin.H{"message": err.Error()})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
 
 	if before != nil {
 		err := before(result)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
@@ -284,7 +284,7 @@ func (c *Controller[T]) Delete(ctx *gin.Context, before func(item *T) error, aft
 	if after != nil {
 		err := after(result)
 		if err != nil {
-			ctx.JSON(400, gin.H{"message": err.Error()})
+			ctx.Error(err)
 			return
 		}
 	}
