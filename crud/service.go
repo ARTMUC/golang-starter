@@ -9,8 +9,8 @@ import (
 
 type Service[T any] interface {
 	FindTrx(api GetAllRequest) (error, *gorm.DB)
-	Find(api GetAllRequest, result interface{}, totalRows *int64) error
-	FindOne(api GetAllRequest, result interface{}) error
+	Find(api GetAllRequest) ([]*T, int64, error)
+	FindOne(api GetAllRequest) (*T, error)
 	Create(data *T) error
 	Delete(cond *T) error
 	Update(cond *T, updatedColumns *T) error
@@ -64,24 +64,34 @@ func (svc *service[T]) FindTrx(api GetAllRequest) (error, *gorm.DB) {
 	return nil, tx
 }
 
-func (svc *service[T]) Find(api GetAllRequest, result interface{}, totalRows *int64) error {
+func (svc *service[T]) Find(api GetAllRequest) ([]*T, int64, error) {
+	var result []*T
+	var totalRows int64
+
 	err, tx := svc.FindTrx(api)
-	tx.Count(totalRows)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	tx.Count(&totalRows)
+
 	if api.Page > 0 {
 		tx.Offset((api.Page - 1) * api.Limit)
 	}
-	if err != nil {
-		return err
+
+	if err = tx.Find(&result).Error; err != nil {
+		return nil, 0, err
 	}
-	return tx.Find(result).Error
+
+	return result, totalRows, nil
 }
 
-func (svc *service[T]) FindOne(api GetAllRequest, result interface{}) error {
+func (svc *service[T]) FindOne(api GetAllRequest) (*T, error) {
+	var result *T
 	var s map[string]interface{}
 	if len(api.S) > 0 {
-		err := json.Unmarshal([]byte(api.S), &s)
-		if err != nil {
-			return err
+		if err := json.Unmarshal([]byte(api.S), &s); err != nil {
+			return nil, err
 		}
 	}
 
@@ -103,11 +113,15 @@ func (svc *service[T]) FindOne(api GetAllRequest, result interface{}) error {
 		svc.Qtb.sortMapper(api.Sort, tx)
 	}
 
-	err := svc.Qtb.searchMapper(s, tx)
-	if err != nil {
-		return err
+	if err := svc.Qtb.searchMapper(s, tx); err != nil {
+		return nil, err
 	}
-	return tx.First(result).Error
+
+	if err := tx.First(result).Error; err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (svc *service[T]) Create(data *T) error {

@@ -2,23 +2,21 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/golang-starter/pkg/httperr"
 	"golang.org/x/crypto/bcrypt"
 	"html"
-	"net/http"
 	"strings"
 )
 
-func (c *Controller[T]) register(ctx *gin.Context) {
+func (c *Controller[T]) register(ctx *gin.Context) (*T, error) {
 	var input RegisterInput
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
 	user := &T{
@@ -26,11 +24,9 @@ func (c *Controller[T]) register(ctx *gin.Context) {
 		Password: html.EscapeString(strings.TrimSpace(input.Username)),
 	}
 
-	err = c.userRepository.Create(user)
-	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	if err = c.userRepository.Create(user); err != nil {
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"success": true})
+	return user, nil
 }

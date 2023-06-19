@@ -1,18 +1,11 @@
 # Go gin crud starter
-This repo could be used as a kind of inherited CRUD api, and it will save a lot of time.
+Starter for fast CRUD. Compatible with nestjsx filtering options.
+Based on github.com:ElegantSoft/go-crud-starter.
 
 ## packages 
 - Gin
 - Gorm
-- Postgres
-- Air
-- Swagger
-
-
-### clone the repo
-`git clone git@github.com:ElegantSoft/go-crud-starter.git $your-project-name`
-
-`cd $your-project-name && rm -R .git`
+- Swagno
 
 ### requests params
 - [Query params](#query-params)

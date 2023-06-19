@@ -10,14 +10,22 @@ type model = models.Post
 
 var crudName = "post"
 
-func defaultCrudConfig[T any]() *crud.Config[T] {
+func crudConfig[T any]() *crud.Config[T] {
 	return &crud.Config[T]{
 		ReadConstraint: &crud.ReadConstraint{
 			Joins:  []string{"Author"},
 			Field:  "author.id",
 			Getter: jwt.MustExtractTokenID,
 		},
-		CreateDto: &CreateDto{},
-		UpdateDto: &UpdateDto{},
+		CreateDto:   &CreateDto{},
+		UpdateDto:   &UpdateDto{},
+		ResponseDto: &model{},
+		DefaultCrudHandlers: []crud.Action{
+			crud.ActionCreate,
+			crud.ActionGet,
+			crud.ActionList,
+			crud.ActionUpdate,
+			crud.ActionDelete,
+		},
 	}
 }

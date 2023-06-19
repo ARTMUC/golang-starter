@@ -6,6 +6,7 @@ import (
 	"github.com/go-swagno/swagno-gin/swagger"
 	"github.com/golang-starter/container"
 	"github.com/golang-starter/di"
+	"net/http"
 )
 
 type Controller interface {
@@ -19,8 +20,6 @@ type Param struct {
 	Required    bool
 	Description string
 }
-
-var BaseCrudQueryParams = "baseCrudQueryParams"
 
 type Docs struct {
 	Params      []string
@@ -71,5 +70,20 @@ func (r *Routes) RegisterRoutes(e *gin.Engine) {
 		swaggerDocs := sw.CreateNewSwagger("Swagger API", "1.0")
 		sw.AddEndpoints(docs)
 		e.GET("/docs/*any", swagger.SwaggerHandler(swaggerDocs.GenerateDocs()))
+	}
+}
+
+func WrapResult(result interface{}, err error) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if err != nil {
+			c.Error(err)
+		}
+
+		successStatusCode := http.StatusOK
+		if c.Request.Method == http.MethodPost {
+			successStatusCode = http.StatusCreated
+		}
+
+		c.JSON(successStatusCode, result)
 	}
 }
