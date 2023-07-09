@@ -6,7 +6,7 @@ import (
 	"github.com/golang-starter/pkg/jwt"
 )
 
-type model = models.Post
+type ResponseDto = models.Post
 
 var crudName = "post"
 
@@ -19,7 +19,7 @@ func crudConfig[T any]() *crud.Config[T] {
 		},
 		CreateDto:   &CreateDto{},
 		UpdateDto:   &UpdateDto{},
-		ResponseDto: &model{},
+		ResponseDto: &ResponseDto{},
 		DefaultCrudHandlers: []crud.Action{
 			crud.ActionCreate,
 			crud.ActionGet,

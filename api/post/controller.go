@@ -7,15 +7,15 @@ import (
 	"github.com/golang-starter/routes"
 )
 
-type Controller[T model] struct {
+type Controller[T ResponseDto] struct {
 	*crud.Controller[T]
 	router *routes.Routes
 }
 
-func NewController[T model](router *routes.Routes) *Controller[T] {
+func NewController[T ResponseDto](router *routes.Routes, service crud.Service[T]) *Controller[T] {
 	controller := &Controller[T]{
 		router:     router,
-		Controller: crud.NewController[T](crudConfig[T]()),
+		Controller: crud.NewController[T](crudConfig[T](), service),
 	}
 	controller.router.AddController(controller)
 

@@ -3,9 +3,9 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	sw "github.com/go-swagno/swagno"
-	"github.com/go-swagno/swagno-gin/swagger"
 	"github.com/golang-starter/container"
 	"github.com/golang-starter/di"
+	_ "github.com/golang-starter/docs"
 	"net/http"
 )
 
@@ -49,15 +49,17 @@ func (r *Routes) AddController(c interface{}) {
 func (r *Routes) RegisterRoutes(e *gin.Engine) {
 	controllers := di.GetMany[Controller](container.Container, r.controllers)
 
+	//swaggerDocs := sw.CreateNewSwagger("Swagger API", "1.0")
+	generateDocs(r.controllers)
 	var docs []sw.Endpoint
 	for _, controller := range controllers {
 		group := e.Group(controller.MainPath())
 		routes := controller.GetRoutes()
 		for _, route := range routes {
-			e.Handle(route.Method, route.Path, route.Handler)
+			group.Handle(route.Method, route.Path, route.Handler)
 
 			doc := route.Docs
-			doc.Path = "/" + controller.MainPath() + route.Path
+			doc.Path = "/" + controller.MainPath() + "/" + route.Path
 			doc.Method = route.Method
 			docs = append(docs, doc)
 		}
@@ -67,10 +69,16 @@ func (r *Routes) RegisterRoutes(e *gin.Engine) {
 			group.Use(middleware)
 		}
 
-		swaggerDocs := sw.CreateNewSwagger("Swagger API", "1.0")
-		sw.AddEndpoints(docs)
-		e.GET("/docs/*any", swagger.SwaggerHandler(swaggerDocs.GenerateDocs()))
+		//sw.AddEndpoints(docs)
 	}
+
+	//jsonDocs := swaggerDocs.GenerateDocs()
+	//swaggerDocs.ExportSwaggerDocs("docs/swagger.json")
+	//
+	//e.GET("/docs/*any", func(ctx *gin.Context) {
+	//	ctx.String(http.StatusOK, string(jsonDocs))
+	//})
+	//e.GET("/docs/*any", swagger.SwaggerHandler(jsonDocs, swagger.Config{Prefix: ""}))
 }
 
 func WrapResult(result interface{}, err error) gin.HandlerFunc {

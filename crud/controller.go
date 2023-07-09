@@ -3,7 +3,6 @@ package crud
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	sw "github.com/go-swagno/swagno"
 	"github.com/golang-starter/pkg/httperr"
 	"github.com/golang-starter/routes"
 	"github.com/jinzhu/copier"
@@ -49,8 +48,9 @@ const (
 	ActionDelete Action = "delete"
 )
 
-func NewController[T any](config *Config[T]) *Controller[T] {
+func NewController[T any](config *Config[T], service Service[T]) *Controller[T] {
 	controller := &Controller[T]{
+		service:             service,
 		constraint:          config.ReadConstraint,
 		createDto:           config.CreateDto,
 		updateDto:           config.UpdateDto,
@@ -173,7 +173,7 @@ func (c *Controller[T]) Create(ctx *gin.Context, beforeFn func(item *T) error, a
 
 func (c *Controller[T]) Update(ctx *gin.Context, beforeFn func(item *T) error, afterFn func(data *T) error) (*T, error) {
 	var queryParams GetAllRequest
-	dto := c.updateDto
+	dto := &c.updateDto
 	var item *T
 	var pathParams ById
 	if err := ctx.ShouldBind(dto); err != nil {
@@ -275,9 +275,12 @@ func (c *Controller[T]) joinConstraint(queryParams GetAllRequest, ctx *gin.Conte
 }
 
 func (c *Controller[T]) addDefaultEndpoints() {
+	//createDto := c.docsCreateDto
+	//updateDto := c.docsUpdateDto
+	//responseDto := c.docsResponseDto
 	defaultActions := map[Action]routes.Handler{
 		ActionGet: {
-			Docs:   sw.Endpoint{Params: sw.Params(sw.IntParam("id", true, "")), Return: c.responseDto},
+			//Docs:   sw.Endpoint{Params: sw.Params(sw.IntParam("id", true, "")), Return: responseDto},
 			Method: http.MethodGet,
 			Path:   ":id",
 			Handler: func(ctx *gin.Context) {
@@ -285,15 +288,15 @@ func (c *Controller[T]) addDefaultEndpoints() {
 			},
 		},
 		ActionList: {
-			Docs: sw.Endpoint{Return: PaginationResponse[T]{}, Params: sw.Params(
-				sw.StrQuery("s", false, "{'$and': [ {'title': { '$cont':'cul' } } ]}"),
-				sw.StrQuery("fields", false, "fields to select eg: name,age"),
-				sw.IntQuery("page", false, "page of pagination"),
-				sw.IntQuery("limit", false, "limit of pagination"),
-				sw.StrQuery("join", false, "join relations eg: category, parent"), // @TODO we should restrict joins
-				sw.StrQuery("filter", false, "filters eg: name||$eq||ad price||$gte||200"),
-				sw.StrQuery("sort", false, "filters eg: created_at,desc title,asc"),
-			)},
+			//Docs: sw.Endpoint{Return: PaginationResponse[T]{}, Params: sw.Params(
+			//	sw.StrQuery("s", false, "{'$and': [ {'title': { '$cont':'cul' } } ]}"),
+			//	sw.StrQuery("fields", false, "fields to select eg: name,age"),
+			//	sw.IntQuery("page", false, "page of pagination"),
+			//	sw.IntQuery("limit", false, "limit of pagination"),
+			//	sw.StrQuery("join", false, "join relations eg: category, parent"), // @TODO we should restrict joins
+			//	sw.StrQuery("filter", false, "filters eg: name||$eq||ad price||$gte||200"),
+			//	sw.StrQuery("sort", false, "filters eg: created_at,desc title,asc"),
+			//)},
 			Method: http.MethodGet,
 			Path:   "",
 			Handler: func(ctx *gin.Context) {
@@ -301,7 +304,7 @@ func (c *Controller[T]) addDefaultEndpoints() {
 			},
 		},
 		ActionCreate: {
-			Docs:   sw.Endpoint{Body: c.createDto, Return: c.responseDto},
+			//Docs:   sw.Endpoint{Body: createDto, Return: responseDto},
 			Method: http.MethodPost,
 			Path:   "",
 			Handler: func(ctx *gin.Context) {
@@ -309,7 +312,7 @@ func (c *Controller[T]) addDefaultEndpoints() {
 			},
 		},
 		ActionUpdate: {
-			Docs:   sw.Endpoint{Body: c.updateDto, Params: sw.Params(sw.IntParam("id", true, "")), Return: c.responseDto},
+			//Docs:   sw.Endpoint{Body: updateDto, Params: sw.Params(sw.IntParam("id", true, "")), Return: responseDto},
 			Method: http.MethodPatch,
 			Path:   ":id",
 			Handler: func(ctx *gin.Context) {
@@ -317,7 +320,7 @@ func (c *Controller[T]) addDefaultEndpoints() {
 			},
 		},
 		ActionDelete: {
-			Docs:   sw.Endpoint{Params: sw.Params(sw.IntParam("id", true, ""))},
+			//Docs:   sw.Endpoint{Params: sw.Params(sw.IntParam("id", true, ""))},
 			Method: http.MethodDelete,
 			Path:   ":id",
 			Handler: func(ctx *gin.Context) {

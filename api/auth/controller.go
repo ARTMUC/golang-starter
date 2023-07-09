@@ -31,7 +31,7 @@ func (c *Controller[T]) MainPath() string {
 func (c *Controller[T]) GetRoutes() []routes.Handler {
 	return []routes.Handler{
 		{
-			Docs:   sw.Endpoint{Body: &RegisterInput{}},
+			Docs:   sw.Endpoint{Body: RegisterInput{}},
 			Method: http.MethodPost,
 			Path:   "register",
 			Handler: func(ctx *gin.Context) {
@@ -39,7 +39,7 @@ func (c *Controller[T]) GetRoutes() []routes.Handler {
 			},
 		},
 		{
-			Docs:   sw.Endpoint{Body: &LoginInput{}},
+			Docs:   sw.Endpoint{Body: LoginInput{}},
 			Method: http.MethodPost,
 			Path:   "signin",
 			Handler: func(ctx *gin.Context) {

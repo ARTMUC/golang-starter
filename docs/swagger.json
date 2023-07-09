@@ -1,306 +1,276 @@
 {
-    "swagger": "2.0",
-    "info": {
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@swagger.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        }
+  "swagger": "2.0",
+  "info": {
+    "title": "Swagger API",
+    "version": "1.0",
+    "contact": {},
+    "license": {}
+  },
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "post-/auth/register",
+        "parameters": [
+          {
+            "type": "",
+            "description": "body",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.RegisterInput"
+            }
+          }
+        ],
+        "responses": {}
+      }
     },
-    "paths": {
-        "/post": {
-            "get": {
-                "tags": [
-                    "post"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "{'$and': [ {'title': { '$cont':'cul' } } ]}",
-                        "name": "s",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "fields to select eg: name,age",
-                        "name": "fields",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "page of pagination",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "limit of pagination",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "join relations eg: category, parent",
-                        "name": "join",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "filters eg: name||$eq||ad price||$gte||200",
-                        "name": "filter",
-                        "in": "query"
-                    },
-                    {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        },
-                        "description": "filters eg: created_at,desc title,asc",
-                        "name": "sort",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/post.model"
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "post"
-                ],
-                "parameters": [
-                    {
-                        "description": "item to create",
-                        "name": "{object}",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/post.CreateDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/post.model"
-                        }
-                    }
-                }
+    "/auth/signin": {
+      "post": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "post-/auth/signin",
+        "parameters": [
+          {
+            "type": "",
+            "description": "body",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/auth.LoginInput"
             }
-        },
-        "/post/{id}": {
-            "get": {
-                "tags": [
-                    "post"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "uuid of item",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/post.model"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "post"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "uuid of item",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "update body",
-                        "name": "item",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/post.UpdateDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "post"
-                ],
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "uuid of item",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        }
+          }
+        ],
+        "responses": {}
+      }
     },
-    "definitions": {
-        "models.Category": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "post": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Post"
-                    }
-                },
-                "updated_at": {
-                    "type": "string"
-                }
+    "/post/": {
+      "get": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "get-/post/",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "{'$and': [ {'title': { '$cont':'cul' } } ]}",
+            "name": "s",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "string",
+            "description": "fields to select eg: name,age",
+            "name": "fields",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "page of pagination",
+            "name": "page",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "integer",
+            "description": "limit of pagination",
+            "name": "limit",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "string",
+            "description": "join relations eg: category, parent",
+            "name": "join",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "string",
+            "description": "filters eg: name||$eq||ad price||$gte||200",
+            "name": "filter",
+            "in": "query",
+            "required": false
+          },
+          {
+            "type": "string",
+            "description": "filters eg: created_at,desc title,asc",
+            "name": "sort",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/crud.PaginationResponse[github.com/golang-starter/domain/models.Post]"
             }
-        },
-        "models.Post": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "category_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "post.CreateDto": {
-            "type": "object",
-            "required": [
-                "category",
-                "description",
-                "title"
-            ],
-            "properties": {
-                "category": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "post.UpdateDto": {
-            "type": "object",
-            "required": [
-                "category_id",
-                "description",
-                "title"
-            ],
-            "properties": {
-                "category_id": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "title": {
-                    "type": "string"
-                }
-            }
-        },
-        "post.model": {
-            "type": "object",
-            "properties": {
-                "category": {
-                    "$ref": "#/definitions/models.Category"
-                },
-                "category_id": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "price": {
-                    "type": "integer"
-                },
-                "title": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
+          }
         }
+      },
+      "post": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "post-/post/",
+        "parameters": [
+          {
+            "type": "",
+            "description": "body",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/post.CreateDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.Post"
+            }
+          }
+        }
+      }
+    },
+    "/post/:id": {
+      "delete": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "delete-/post/:id",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {}
+      },
+      "get": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "get-/post/:id",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.Post"
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json",
+          "application/xml"
+        ],
+        "tags": null,
+        "summary": "",
+        "operationId": "patch-/post/:id",
+        "parameters": [
+          {
+            "type": "integer",
+            "description": "",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "type": "",
+            "description": "body",
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/post.UpdateDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/models.Post"
+            }
+          }
+        }
+      }
     }
+  },
+  "basePath": "/",
+  "host": "",
+  "definitions": null,
+  "schemes": [
+    "http",
+    "https"
+  ]
 }

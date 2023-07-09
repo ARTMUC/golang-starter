@@ -10,6 +10,7 @@ import (
 	"github.com/golang-starter/middlewares"
 	"github.com/golang-starter/routes"
 	"github.com/golang-starter/validator"
+	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
@@ -23,9 +24,9 @@ import (
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
-	//if err := godotenv.Load(); err != nil {
-	//	log.Fatal("Error loading .env file")
-	//}
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	server := gin.New()
 	server.Use(gin.Recovery())
 	server.Use(middlewares.ErrorHandler())
@@ -43,19 +44,20 @@ func main() {
 
 	validator.RegisterBindingsValidators()
 
-	//gin.SetMode(os.Getenv("GIN_MODE"))
+	gin.SetMode(os.Getenv("GIN_MODE"))
 	//if err := db.Open(os.Getenv("DB_URL")); err != nil {
 	//	log.Fatal(err)
 	//}
+
 	log.Println("server started")
 
 	server.GET("", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{"message": "ok 5"})
 	})
 
-	// migrations
+	//migrations
 	//db.AddUUIDExtension()
-
+	//
 	//if err := db.DB.AutoMigrate(
 	//	models.Category{},
 	//	models.Post{},
@@ -77,7 +79,15 @@ func main() {
 
 	di.MustGet(container.Container, &routes.Routes{}).RegisterRoutes(server)
 
-	server.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	//server.Static("/swagger", "./swagger")
+
+	//server.GET("/swagger", func(c *gin.Context) {
+	//	c.HTML(200, "swagger/index.html", gin.H{})
+	//})
 
 	err := server.Run(":8081")
 	if err != nil {
