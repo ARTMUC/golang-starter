@@ -8,9 +8,10 @@ import (
 	"strings"
 )
 
-func (c *Controller[T]) register(ctx *gin.Context) (*T, error) {
+// @TODO ad docs here
+func (c *Controller[T]) register(ctx *gin.Context) (any, error) {
 	var input RegisterInput
-	if err := ctx.ShouldBindJSON(&input); err != nil {
+	if err := ctx.ShouldBind(&input); err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
@@ -18,15 +19,12 @@ func (c *Controller[T]) register(ctx *gin.Context) (*T, error) {
 	if err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
-
 	user := &T{
 		Username: string(hashedPassword),
 		Password: html.EscapeString(strings.TrimSpace(input.Username)),
 	}
-
 	if err = c.userRepository.Create(user); err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
-
 	return user, nil
 }

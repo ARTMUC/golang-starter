@@ -8,7 +8,7 @@ import (
 )
 
 type Service[T any] interface {
-	FindTrx(api GetAllRequest) (error, *gorm.DB)
+	BuildQueryFromParams(api GetAllRequest) (error, *gorm.DB)
 	Find(api GetAllRequest) ([]*T, int64, error)
 	FindOne(api GetAllRequest) (*T, error)
 	Create(data *T) error
@@ -17,11 +17,11 @@ type Service[T any] interface {
 }
 
 type service[T any] struct {
-	Repo baserepo.Dao[T]
-	Qtb  *QueryToDBConverter
+	dao baserepo.Dao[T]
+	qtb *QueryToDBConverter
 }
 
-func (svc *service[T]) FindTrx(api GetAllRequest) (error, *gorm.DB) {
+func (svc *service[T]) BuildQueryFromParams(api GetAllRequest) (error, *gorm.DB) {
 	var s map[string]interface{}
 	if len(api.S) > 0 {
 		err := json.Unmarshal([]byte(api.S), &s)
@@ -30,31 +30,31 @@ func (svc *service[T]) FindTrx(api GetAllRequest) (error, *gorm.DB) {
 		}
 	}
 
-	tx := svc.Repo.GetTx()
+	tx := svc.dao.GetTx()
 	if len(api.Fields) > 0 {
 		fields := strings.Split(api.Fields, ",")
 		tx.Select(fields)
 	}
 	if len(api.Join) > 0 {
-		svc.Qtb.relationsMapper(api.Join, tx)
+		svc.qtb.relationsMapper(api.Join, tx)
 	}
 
 	if len(api.Filter) > 0 {
-		svc.Qtb.filterMapper(api.Filter, tx)
+		svc.qtb.filterMapper(api.Filter, tx)
 	}
 
 	if len(api.Sort) > 0 {
-		svc.Qtb.sortMapper(api.Sort, tx)
+		svc.qtb.sortMapper(api.Sort, tx)
 	}
 
 	if api.C != nil {
-		err := svc.Qtb.searchMapper(api.C, tx)
+		err := svc.qtb.searchMapper(api.C, tx)
 		if err != nil {
 			return err, nil
 		}
 	}
 
-	err := svc.Qtb.searchMapper(s, tx)
+	err := svc.qtb.searchMapper(s, tx)
 	if err != nil {
 		return err, nil
 	}
@@ -68,7 +68,7 @@ func (svc *service[T]) Find(api GetAllRequest) ([]*T, int64, error) {
 	var result []*T
 	var totalRows int64
 
-	err, tx := svc.FindTrx(api)
+	err, tx := svc.BuildQueryFromParams(api)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -95,25 +95,25 @@ func (svc *service[T]) FindOne(api GetAllRequest) (*T, error) {
 		}
 	}
 
-	tx := svc.Repo.GetTx()
+	tx := svc.dao.GetTx()
 
 	if len(api.Fields) > 0 {
 		fields := strings.Split(api.Fields, ",")
 		tx.Select(fields)
 	}
 	if len(api.Join) > 0 {
-		svc.Qtb.relationsMapper(api.Join, tx)
+		svc.qtb.relationsMapper(api.Join, tx)
 	}
 
 	if len(api.Filter) > 0 {
-		svc.Qtb.filterMapper(api.Filter, tx)
+		svc.qtb.filterMapper(api.Filter, tx)
 	}
 
 	if len(api.Sort) > 0 {
-		svc.Qtb.sortMapper(api.Sort, tx)
+		svc.qtb.sortMapper(api.Sort, tx)
 	}
 
-	if err := svc.Qtb.searchMapper(s, tx); err != nil {
+	if err := svc.qtb.searchMapper(s, tx); err != nil {
 		return nil, err
 	}
 
@@ -125,20 +125,20 @@ func (svc *service[T]) FindOne(api GetAllRequest) (*T, error) {
 }
 
 func (svc *service[T]) Create(data *T) error {
-	return svc.Repo.Create(data)
+	return svc.dao.Create(data)
 }
 
 func (svc *service[T]) Delete(cond *T) error {
-	return svc.Repo.Delete(cond)
+	return svc.dao.Delete(cond)
 }
 
 func (svc *service[T]) Update(cond *T, updatedColumns *T) error {
-	return svc.Repo.Update(cond, updatedColumns)
+	return svc.dao.Update(cond, updatedColumns)
 }
 
 func NewService[T any](repo baserepo.Dao[T]) Service[T] {
 	return &service[T]{
-		Repo: repo,
-		Qtb:  &QueryToDBConverter{},
+		dao: repo,
+		qtb: &QueryToDBConverter{},
 	}
 }

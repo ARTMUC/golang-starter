@@ -27,7 +27,6 @@ func GenerateToken(userID uuid.UUID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
-
 }
 
 func TokenValid(c *gin.Context) error {

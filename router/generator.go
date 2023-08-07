@@ -1,4 +1,4 @@
-package routes
+package router
 
 import (
 	"fmt"
@@ -22,7 +22,9 @@ func generateDocs(controllers []interface{}) {
 		pkgName := pkgParts[len(pkgParts)-1]
 		fmt.Println("pkg name", pkgName)
 
-		listFields(ctrl)
+		baseUrl := controller.MainPath()
+
+		//listFields(ctrl)
 		pn := pkgName
 		postFunctionName := pn + "PostGenerated"
 		listFunctionName := pn + "ListGenerated"
@@ -61,19 +63,19 @@ func generateDocs(controllers []interface{}) {
 		var code string
 
 		if !omitPost {
-			code += generatePostFunctions(pn, postFunctionName, responseObject, createDto)
+			code += generatePostFunctions(baseUrl, postFunctionName, responseObject, createDto)
 		}
 
 		if !omitUpdate {
-			code += generateUpdateFunctions(pn, updateFunctionName, responseObject, updateDto)
+			code += generateUpdateFunctions(baseUrl, updateFunctionName, responseObject, updateDto)
 		}
 
 		if !omitDelete {
-			code += generateDeleteFunctions(pn, deleteFunctionName)
+			code += generateDeleteFunctions(baseUrl, deleteFunctionName)
 		}
 
 		if !omitGet {
-			code += generateGetFunctions(pn, getFunctionName, responseObject)
+			code += generateGetFunctions(baseUrl, getFunctionName, responseObject)
 		}
 
 		if !omitList {
@@ -81,7 +83,7 @@ func generateDocs(controllers []interface{}) {
 			//if cond, ok := value["conditions"].([]string); ok {
 			//	conditions = cond
 			//}
-			code += generateListFunctions(pn, listFunctionName, responseObject, []string{})
+			code += generateListFunctions(baseUrl, listFunctionName, responseObject, []string{})
 		}
 
 		builder.WriteString(code)
@@ -107,7 +109,7 @@ func generatePostFunctions(key, functionName, responseObject string, createDto s
 	builder.WriteString(fmt.Sprintf("// @Produce   json\n"))
 	builder.WriteString(fmt.Sprintf("// @Param\t  request body %s true \"Request data\"      \n", createDto))
 	builder.WriteString(fmt.Sprintf("// @Response  201 {object}        %s\n", responseObject))
-	builder.WriteString(fmt.Sprintf("// @Router    /campaign/crud/:campaign/%s [post]\n", key))
+	builder.WriteString(fmt.Sprintf("// @Router    /%s [post]\n", key))
 	builder.WriteString(fmt.Sprintf("func %s() {}\n\n", functionName))
 
 	return builder.String()
@@ -123,7 +125,7 @@ func generateGetFunctions(key, functionName, responseObject string) string {
 	builder.WriteString(fmt.Sprintf("// @Produce   json\n"))
 	builder.WriteString(fmt.Sprintf("// @Param\t   id path string true \"id of item\"      \n"))
 	builder.WriteString(fmt.Sprintf("// @Response  200 {object}        %s\n", responseObject))
-	builder.WriteString(fmt.Sprintf("// @Router    /campaign/crud/:campaign/%s/:id [get]\n", key))
+	builder.WriteString(fmt.Sprintf("// @Router    /%s/:id [get]\n", key))
 	builder.WriteString(fmt.Sprintf("func %s() {}\n\n", functionName))
 
 	return builder.String()
@@ -138,7 +140,7 @@ func generateDeleteFunctions(key, functionName string) string {
 	builder.WriteString(fmt.Sprintf("// @Accept    json\n"))
 	builder.WriteString(fmt.Sprintf("// @Produce   json\n"))
 	builder.WriteString(fmt.Sprintf("// @Param\t   id path string true \"id of item\"      \n"))
-	builder.WriteString(fmt.Sprintf("// @Router    /campaign/crud/:campaign/%s/:id [delete]\n", key))
+	builder.WriteString(fmt.Sprintf("// @Router    /%s/:id [delete]\n", key))
 	builder.WriteString(fmt.Sprintf("func %s() {}\n\n", functionName))
 
 	return builder.String()
@@ -155,7 +157,7 @@ func generateUpdateFunctions(key, functionName, responseObject string, updateDto
 	builder.WriteString(fmt.Sprintf("// @Param\t   id path string true \"id of item\"      \n"))
 	builder.WriteString(fmt.Sprintf("// @Param\t  request body %s true \"Request data\"      \n", updateDto))
 	builder.WriteString(fmt.Sprintf("// @Response  200 {object}        %s\n", responseObject))
-	builder.WriteString(fmt.Sprintf("// @Router    /campaign/crud/:campaign/%s/:id [put]\n", key))
+	builder.WriteString(fmt.Sprintf("// @Router    /%s/:id [put]\n", key))
 	builder.WriteString(fmt.Sprintf("func %s() {}\n\n", functionName))
 
 	return builder.String()
@@ -169,11 +171,13 @@ func generateListFunctions(key, functionName, responseObject string, conditions 
 	builder.WriteString(fmt.Sprintf("// @Tags   %s crud   \n", key))
 	builder.WriteString(fmt.Sprintf("// @Accept    json\n"))
 	builder.WriteString(fmt.Sprintf("// @Produce   json\n"))
-	builder.WriteString(fmt.Sprintf("// @Param     campaign            path string true  \"campaign uuid\"\n"))
-	builder.WriteString(fmt.Sprintf("// @Param     offset              query string false  \"offset\"\n"))
-	builder.WriteString(fmt.Sprintf("// @Param     limit               query string false  \"limit\"\n"))
-	builder.WriteString(fmt.Sprintf("// @Param     orderBy             query string false  \"orderBy\"\n"))
-	builder.WriteString(fmt.Sprintf("// @Param     orderDir            query string false  \"orderDir\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     s                   query string false  \"{'$and': [ {'title': { '$cont':'cul' } } ]}\"\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     fields               query string false  \"fields to select eg: name,age\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     page             query string false  \"page of pagination\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     limit            query string false  \"limit of pagination\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     join            query string false  \"join relations eg: category, parent\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     filter            query string false  \"filters eg: name||$eq||ad price||$gte||200\"\n"))
+	builder.WriteString(fmt.Sprintf("// @Param     sort            query string false  \"filters eg: created_at,desc title,asc\"\n"))
 	for _, condition := range conditions {
 		builder.WriteString(fmt.Sprintf("// @Param     %s            query string false  \"%s\"\n", condition, condition))
 	}
@@ -188,28 +192,28 @@ func saveToFile(filename, code string) error {
 	return ioutil.WriteFile(filename, []byte(code), 0644)
 }
 
-func listFields(obj interface{}) {
-	t := reflect.TypeOf(obj).Elem()
-	if t.Kind() != reflect.Struct {
-		fmt.Println("Expected a struct type.")
-		return
-	}
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		fmt.Println("---------------")
-		fmt.Println("Field:", field.Name)
-		fmt.Println("Type:", field.Type)
-		fmt.Println("Tag:", field.Tag)
-		fmt.Println("---------------")
-
-		// Check if the field is a struct
-		if field.Type.Kind() == reflect.Ptr {
-			if field.Type.Elem().Kind() == reflect.Struct {
-				// Recursively list fields of nested struct
-				listFields(reflect.New(field.Type).Elem().Interface())
-			}
-		}
-
-	}
-}
+//func listFields(obj interface{}) {
+//	t := reflect.TypeOf(obj).Elem()
+//	if t.Kind() != reflect.Struct {
+//		fmt.Println("Expected a struct type.")
+//		return
+//	}
+//
+//	for i := 0; i < t.NumField(); i++ {
+//		field := t.Field(i)
+//		fmt.Println("---------------")
+//		fmt.Println("Field:", field.Name)
+//		fmt.Println("Type:", field.Type)
+//		fmt.Println("Tag:", field.Tag)
+//		fmt.Println("---------------")
+//
+//		// Check if the field is a struct
+//		if field.Type.Kind() == reflect.Ptr {
+//			if field.Type.Elem().Kind() == reflect.Struct {
+//				// Recursively list fields of nested struct
+//				listFields(reflect.New(field.Type).Elem().Interface())
+//			}
+//		}
+//
+//	}
+//}

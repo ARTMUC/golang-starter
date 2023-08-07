@@ -1,12 +1,15 @@
-package routes
+package router
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	sw "github.com/go-swagno/swagno"
 	"github.com/golang-starter/container"
 	"github.com/golang-starter/di"
 	_ "github.com/golang-starter/docs"
+	"github.com/golang-starter/pkg/httperr"
 	"net/http"
+	"reflect"
 )
 
 type Controller interface {
@@ -29,7 +32,7 @@ type Docs struct {
 
 type Handler struct {
 	Method  string
-	Handler func(*gin.Context)
+	Handler func(*gin.Context) (any, error)
 	Path    string
 	Docs    sw.Endpoint
 }
@@ -56,7 +59,13 @@ func (r *Routes) RegisterRoutes(e *gin.Engine) {
 		group := e.Group(controller.MainPath())
 		routes := controller.GetRoutes()
 		for _, route := range routes {
-			group.Handle(route.Method, route.Path, route.Handler)
+			group.Handle(
+				route.Method,
+				route.Path,
+				func(ctx *gin.Context) {
+					WrapResult(route.Handler(ctx))(ctx)
+				},
+			)
 
 			doc := route.Docs
 			doc.Path = "/" + controller.MainPath() + "/" + route.Path
@@ -83,8 +92,16 @@ func (r *Routes) RegisterRoutes(e *gin.Engine) {
 
 func WrapResult(result interface{}, err error) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		fmt.Println(reflect.TypeOf(err))
 		if err != nil {
-			c.Error(err)
+			switch e := err.(type) {
+			case httperr.ErrCustomError:
+				c.AbortWithStatusJSON(e.StatusCode, map[string]string{"message": e.Message})
+				return
+			default:
+				c.Error(err)
+				return
+			}
 		}
 
 		successStatusCode := http.StatusOK

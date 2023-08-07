@@ -5,10 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/api"
 	"github.com/golang-starter/container"
+	"github.com/golang-starter/db"
 	"github.com/golang-starter/di"
+	"github.com/golang-starter/domain/models"
 	"github.com/golang-starter/domain/repo"
 	"github.com/golang-starter/middlewares"
-	"github.com/golang-starter/routes"
+	"github.com/golang-starter/router"
 	"github.com/golang-starter/validator"
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
@@ -49,6 +51,10 @@ func main() {
 	//	log.Fatal(err)
 	//}
 
+	if err := db.OpenTestDB(); err != nil {
+		log.Fatal(err)
+	}
+
 	log.Println("server started")
 
 	server.GET("", func(ctx *gin.Context) {
@@ -57,16 +63,16 @@ func main() {
 
 	//migrations
 	//db.AddUUIDExtension()
-	//
-	//if err := db.DB.AutoMigrate(
-	//	models.Category{},
-	//	models.Post{},
-	//); err != nil {
-	//	log.Fatal(err)
-	//}
+	if err := db.DB.AutoMigrate(
+		models.User{},
+		models.Category{},
+		models.Post{},
+	); err != nil {
+		log.Fatal(err)
+	}
 
 	var allDependencies = [][]interface{}{
-		routes.GetProviders(),
+		router.GetProviders(),
 		repo.GetProviders(),
 		api.GetProviders(),
 	}
@@ -77,7 +83,8 @@ func main() {
 		}
 	}
 
-	di.MustGet(container.Container, &routes.Routes{}).RegisterRoutes(server)
+	apiRouter := di.MustGet(container.Container, &router.Routes{})
+	apiRouter.RegisterRoutes(server)
 
 	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

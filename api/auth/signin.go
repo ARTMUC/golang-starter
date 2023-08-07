@@ -7,26 +7,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (c *Controller[T]) signin(ctx *gin.Context) (string, error) {
+// @TODO ad docs here
+func (c *Controller[T]) signin(ctx *gin.Context) (any, error) {
 	var input LoginInput
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
-		return "", httperr.NewBadRequestError(err.Error(), err)
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
 	user, err := c.userRepository.FindOneByName(input.Username)
 	if err != nil {
-		return "", httperr.NewBadRequestError(err.Error(), err)
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(input.Password), []byte(user.Password))
-	if err != nil {
-		return "", httperr.NewBadRequestError(err.Error(), err)
+	if err := bcrypt.CompareHashAndPassword([]byte(input.Password), []byte(user.Password)); err != nil {
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
 	token, err := jwt.GenerateToken(user.ID)
 	if err != nil {
-		return "", httperr.NewBadRequestError(err.Error(), err)
+		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
 	return token, nil

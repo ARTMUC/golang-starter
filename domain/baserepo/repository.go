@@ -4,8 +4,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//	@TODO	move it out of the crud package to database
-
 type Dao[T any] interface {
 	FindOne(cond *T, dest *T) error
 	Update(cond *T, updatedColumns *T) error
@@ -40,11 +38,4 @@ func (r *Repository[T]) Create(data *T) error {
 
 func (r *Repository[T]) GetTx() *gorm.DB {
 	return r.DB.Model(r.Model)
-}
-
-func NewRepository[T any](db *gorm.DB, model T) Dao[T] {
-	return &Repository[T]{
-		DB:    db,
-		Model: model,
-	}
 }

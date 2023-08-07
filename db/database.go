@@ -45,7 +45,7 @@ func OpenTestDB() error {
 		},
 	)
 	var err error
-	DB, err = gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{
+	DB, err = gorm.Open(sqlite.Open("test.db"), &gorm.Config{
 		Logger:                 newLogger,
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
