@@ -1,8 +1,8 @@
 package repo
 
 import (
-	"github.com/golang-starter/db"
-	"github.com/golang-starter/domain/baserepo"
+	"github.com/golang-starter/core/baserepo"
+	"github.com/golang-starter/core/db"
 	"github.com/golang-starter/domain/models"
 )
 

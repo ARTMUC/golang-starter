@@ -6,7 +6,8 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/golang-starter/container"
-	"github.com/golang-starter/di"
+	"github.com/golang-starter/core/basemodel"
+	"github.com/golang-starter/core/di"
 	"github.com/golang-starter/domain/models"
 	"github.com/golang-starter/domain/repo"
 	"github.com/golang-starter/pkg/jwt"
@@ -34,9 +35,9 @@ func RegisterBindingsValidators() {
 func CheckCategoryUser(categoryID uuid.UUID, userID uuid.UUID) bool {
 	var categoryRepository repo.CategoryRepo[models.Category]
 	di.GetProvider(container.Container, &categoryRepository)
+	category := &models.Category{}
 
-	var category *models.Category
-	err := categoryRepository.FindOne(&models.Category{ID: categoryID, UserID: userID}, category)
+	err := categoryRepository.FindOne(&models.Category{Model: basemodel.Model{ID: categoryID}, UserID: &userID}, category)
 	if err != nil {
 		return false
 	}

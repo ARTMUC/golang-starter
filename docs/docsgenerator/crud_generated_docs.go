@@ -1,4 +1,4 @@
-package router
+package docsgenerator
 
 // postPostGenerated godoc
 // @Summary   Creates entity
@@ -7,7 +7,7 @@ package router
 // @Produce   json
 // @Param	  request body post.CreateDto true "Request data"
 // @Response  201 {object}        post.Model
-// @Router    /campaign/crud/:campaign/post [post]
+// @Router    /post [post]
 func postPostGenerated() {}
 
 // postUpdateGenerated godoc
@@ -18,7 +18,7 @@ func postPostGenerated() {}
 // @Param	   id path string true "id of item"
 // @Param	  request body post.UpdateDto true "Request data"
 // @Response  200 {object}        post.Model
-// @Router    /campaign/crud/:campaign/post/:id [put]
+// @Router    /post/:id [put]
 func postUpdateGenerated() {}
 
 // postDeleteGenerated godoc
@@ -27,7 +27,7 @@ func postUpdateGenerated() {}
 // @Accept    json
 // @Produce   json
 // @Param	   id path string true "id of item"
-// @Router    /campaign/crud/:campaign/post/:id [delete]
+// @Router    /post/:id [delete]
 func postDeleteGenerated() {}
 
 // postGetGenerated godoc
@@ -37,7 +37,7 @@ func postDeleteGenerated() {}
 // @Produce   json
 // @Param	   id path string true "id of item"
 // @Response  200 {object}        post.Model
-// @Router    /campaign/crud/:campaign/post/:id [get]
+// @Router    /post/:id [get]
 func postGetGenerated() {}
 
 // postListGenerated godoc
@@ -45,11 +45,13 @@ func postGetGenerated() {}
 // @Tags   post crud
 // @Accept    json
 // @Produce   json
-// @Param     campaign            path string true  "campaign uuid"
-// @Param     offset              query string false  "offset"
-// @Param     limit               query string false  "limit"
-// @Param     orderBy             query string false  "orderBy"
-// @Param     orderDir            query string false  "orderDir"
+// @Param     s                   query string false  "{'$and': [ {'title': { '$cont':'cul' } } ]}""
+// @Param     fields               query string false  "fields to select eg: name,age"
+// @Param     page             query string false  "page of pagination"
+// @Param     limit            query string false  "limit of pagination"
+// @Param     join            query string false  "join relations eg: category, parent"
+// @Param     filter            query string false  "filters eg: name||$eq||ad price||$gte||200"
+// @Param     sort            query string false  "filters eg: created_at,desc title,asc"
 // @Response  200 {object}        pagination.Output{rows=[]post.Model}
 // @Router    /campaign/crud/:campaign/post [get]
 func postListGenerated() {}
@@ -61,7 +63,7 @@ func postListGenerated() {}
 // @Produce   json
 // @Param	  request body auth.CreateDto true "Request data"
 // @Response  201 {object}        auth.Model
-// @Router    /campaign/crud/:campaign/auth [post]
+// @Router    /auth [post]
 func authPostGenerated() {}
 
 // authUpdateGenerated godoc
@@ -72,7 +74,7 @@ func authPostGenerated() {}
 // @Param	   id path string true "id of item"
 // @Param	  request body auth.UpdateDto true "Request data"
 // @Response  200 {object}        auth.Model
-// @Router    /campaign/crud/:campaign/auth/:id [put]
+// @Router    /auth/:id [put]
 func authUpdateGenerated() {}
 
 // authDeleteGenerated godoc
@@ -81,7 +83,7 @@ func authUpdateGenerated() {}
 // @Accept    json
 // @Produce   json
 // @Param	   id path string true "id of item"
-// @Router    /campaign/crud/:campaign/auth/:id [delete]
+// @Router    /auth/:id [delete]
 func authDeleteGenerated() {}
 
 // authGetGenerated godoc
@@ -91,7 +93,7 @@ func authDeleteGenerated() {}
 // @Produce   json
 // @Param	   id path string true "id of item"
 // @Response  200 {object}        auth.Model
-// @Router    /campaign/crud/:campaign/auth/:id [get]
+// @Router    /auth/:id [get]
 func authGetGenerated() {}
 
 // authListGenerated godoc
@@ -99,11 +101,13 @@ func authGetGenerated() {}
 // @Tags   auth crud
 // @Accept    json
 // @Produce   json
-// @Param     campaign            path string true  "campaign uuid"
-// @Param     offset              query string false  "offset"
-// @Param     limit               query string false  "limit"
-// @Param     orderBy             query string false  "orderBy"
-// @Param     orderDir            query string false  "orderDir"
+// @Param     s                   query string false  "{'$and': [ {'title': { '$cont':'cul' } } ]}""
+// @Param     fields               query string false  "fields to select eg: name,age"
+// @Param     page             query string false  "page of pagination"
+// @Param     limit            query string false  "limit of pagination"
+// @Param     join            query string false  "join relations eg: category, parent"
+// @Param     filter            query string false  "filters eg: name||$eq||ad price||$gte||200"
+// @Param     sort            query string false  "filters eg: created_at,desc title,asc"
 // @Response  200 {object}        pagination.Output{rows=[]auth.Model}
 // @Router    /campaign/crud/:campaign/auth [get]
 func authListGenerated() {}

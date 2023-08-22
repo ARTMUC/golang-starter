@@ -27,6 +27,9 @@ func Open(dsn string) error {
 		Logger:                 newLogger,
 		SkipDefaultTransaction: true,
 		PrepareStmt:            false,
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
 	})
 	if err != nil {
 		return err
@@ -49,6 +52,9 @@ func OpenTestDB() error {
 		Logger:                 newLogger,
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
+		NowFunc: func() time.Time {
+			return time.Now().UTC()
+		},
 	})
 	if err != nil {
 		return err

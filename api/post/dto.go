@@ -1,8 +1,6 @@
 package post
 
-import (
-	"github.com/google/uuid"
-)
+import "github.com/google/uuid"
 
 type CreateDto struct {
 	Title       string     `json:"title,omitempty" binding:"required"`

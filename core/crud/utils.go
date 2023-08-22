@@ -133,6 +133,14 @@ func (q *QueryToDBConverter) relationsMapper(joinString string, tx *gorm.DB) {
 	}
 }
 
+func (q *QueryToDBConverter) joinsMapper(relations []string, tx *gorm.DB) {
+	for _, relation := range relations {
+		if len(relation) > 0 {
+			tx.Joins(relation)
+		}
+	}
+}
+
 func (q *QueryToDBConverter) filterMapper(filters []string, tx *gorm.DB) {
 	for _, filter := range filters {
 		filterParams := strings.Split(filter, SEPARATOR)

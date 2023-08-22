@@ -2,30 +2,28 @@ package post
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/crud"
+	"github.com/golang-starter/core/crud"
+	"github.com/golang-starter/core/router"
 	"github.com/golang-starter/domain/models"
 	"github.com/golang-starter/middlewares"
 	"github.com/golang-starter/pkg/jwt"
-	"github.com/golang-starter/router"
 )
 
 type ResponseDto = models.Post
 
-var crudName = "post"
-
-type Controller[T ResponseDto] struct {
+type Controller[T models.Post] struct {
 	*crud.Controller[T]
-	router *router.Routes
 }
 
-func NewController[T ResponseDto](router *router.Routes, service crud.Service[T]) *Controller[T] {
-	controller := &Controller[T]{
-		router: router,
+func NewController[T models.Post](service crud.Service[T]) *Controller[T] {
+	return &Controller[T]{
 		Controller: crud.NewController[T](
 			&crud.Config[T]{
 				ReadConstraint: &crud.ReadConstraint{
-					Joins:  []string{"Author"},
-					Field:  "author.id",
+					Joins: []string{
+						"Inner Join categories ON posts.category_id = categories.id",
+						"Inner Join users ON users.id = categories.user_id"},
+					Field:  "users.id",
 					Getter: jwt.MustExtractTokenID,
 				},
 				CreateDto:           &CreateDto{},
@@ -37,9 +35,6 @@ func NewController[T ResponseDto](router *router.Routes, service crud.Service[T]
 			service,
 		),
 	}
-	controller.router.AddController(controller)
-
-	return controller
 }
 
 func (c *Controller[T]) GetMiddlewares() []gin.HandlerFunc {
@@ -47,7 +42,7 @@ func (c *Controller[T]) GetMiddlewares() []gin.HandlerFunc {
 }
 
 func (c *Controller[T]) MainPath() string {
-	return crudName
+	return "post"
 }
 
 func (c *Controller[T]) GetRoutes() []router.Handler {

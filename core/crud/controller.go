@@ -3,14 +3,14 @@ package crud
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-starter/core/router"
 	"github.com/golang-starter/pkg/httperr"
-	"github.com/golang-starter/router"
 	"github.com/jinzhu/copier"
 	"math"
 	"net/http"
-	"strings"
 )
 
+// @TODO: change GetAllRequest to pointer!!!
 type Hooks[T any] struct {
 	BeforeSave   func(data *T) error
 	AfterSave    func(data *T) error
@@ -95,7 +95,7 @@ func (c *Controller[T]) FindAll(ctx *gin.Context) (any, error) {
 	}
 
 	if c.constraint.Getter != nil && len(c.constraint.Field) > 0 {
-		c.joinConstraint(queryParams, ctx)
+		c.joinConstraint(&queryParams, ctx)
 	}
 
 	if f := c.hooks.BeforeList; f != nil {
@@ -135,7 +135,7 @@ func (c *Controller[T]) FindOne(ctx *gin.Context) (any, error) {
 	}
 
 	if c.constraint.Getter != nil && len(c.constraint.Field) > 0 {
-		c.joinConstraint(queryParams, ctx)
+		c.joinConstraint(&queryParams, ctx)
 	}
 
 	queryParams.Filter = append(queryParams.Filter, fmt.Sprintf("id||eq||%s", pathParams.ID))
@@ -162,7 +162,7 @@ func (c *Controller[T]) FindOne(ctx *gin.Context) (any, error) {
 
 func (c *Controller[T]) Create(ctx *gin.Context) (any, error) {
 	dto := c.createDto
-	var item *T
+	var item = new(T)
 	if err := ctx.ShouldBind(dto); err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
@@ -205,7 +205,7 @@ func (c *Controller[T]) Update(ctx *gin.Context) (any, error) {
 	}
 
 	if c.constraint.Getter != nil && len(c.constraint.Field) > 0 {
-		c.joinConstraint(queryParams, ctx)
+		c.joinConstraint(&queryParams, ctx)
 	}
 	queryParams.Filter = append(queryParams.Filter, fmt.Sprintf("id||eq||%s", pathParams.ID))
 
@@ -241,7 +241,7 @@ func (c *Controller[T]) Delete(ctx *gin.Context) (any, error) {
 	}
 
 	if c.constraint.Getter != nil && len(c.constraint.Field) > 0 {
-		c.joinConstraint(queryParams, ctx)
+		c.joinConstraint(&queryParams, ctx)
 	}
 
 	queryParams.Filter = append(queryParams.Filter, fmt.Sprintf("id||eq||%s", pathParams.ID))
@@ -270,26 +270,9 @@ func (c *Controller[T]) Delete(ctx *gin.Context) (any, error) {
 	return result, nil
 }
 
-func (c *Controller[T]) joinConstraint(queryParams GetAllRequest, ctx *gin.Context) {
-	queryParams.C = map[string]interface{}{c.constraint.Field: c.constraint.Getter(ctx)}
-
-	var fullJoins []string
-	joinsArray := strings.Split(queryParams.Join, ",")
-	joinsMap := make(map[string]bool)
-
-	for _, s := range joinsArray {
-		joinsMap[s] = true
-	}
-
-	if len(c.constraint.Joins) > 0 {
-		for _, join := range c.constraint.Joins {
-			if !joinsMap[strings.ToLower(join)] {
-				fullJoins = append(fullJoins, join)
-			}
-		}
-	}
-
-	queryParams.Join = strings.Join(fullJoins, ",")
+func (c *Controller[T]) joinConstraint(queryParams *GetAllRequest, ctx *gin.Context) {
+	queryParams.Joins = c.constraint.Joins
+	queryParams.Filter = append(queryParams.Filter, fmt.Sprintf("%s||eq||%s", c.constraint.Field, c.constraint.Getter(ctx)))
 }
 
 func (c *Controller[T]) addDefaultEndpoints() {
@@ -297,27 +280,27 @@ func (c *Controller[T]) addDefaultEndpoints() {
 		ActionGet: {
 			Method:  http.MethodGet,
 			Path:    ":id",
-			Handler: c.FindOne,
+			Handler: func(ctx *gin.Context) { router.WrapResult(c.FindOne(ctx))(ctx) },
 		},
 		ActionList: {
 			Method:  http.MethodGet,
 			Path:    "",
-			Handler: c.FindAll,
+			Handler: func(ctx *gin.Context) { router.WrapResult(c.FindAll(ctx))(ctx) },
 		},
 		ActionCreate: {
 			Method:  http.MethodPost,
 			Path:    "",
-			Handler: c.Create,
+			Handler: func(ctx *gin.Context) { router.WrapResult(c.Create(ctx))(ctx) },
 		},
 		ActionUpdate: {
 			Method:  http.MethodPatch,
 			Path:    ":id",
-			Handler: c.Update,
+			Handler: func(ctx *gin.Context) { router.WrapResult(c.Update(ctx))(ctx) },
 		},
 		ActionDelete: {
 			Method:  http.MethodDelete,
 			Path:    ":id",
-			Handler: c.Delete,
+			Handler: func(ctx *gin.Context) { router.WrapResult(c.Delete(ctx))(ctx) },
 		},
 	}
 

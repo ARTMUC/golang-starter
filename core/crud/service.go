@@ -2,7 +2,7 @@ package crud
 
 import (
 	"encoding/json"
-	"github.com/golang-starter/domain/baserepo"
+	"github.com/golang-starter/core/baserepo"
 	"gorm.io/gorm"
 	"strings"
 )
@@ -35,8 +35,12 @@ func (svc *service[T]) BuildQueryFromParams(api GetAllRequest) (error, *gorm.DB)
 		fields := strings.Split(api.Fields, ",")
 		tx.Select(fields)
 	}
-	if len(api.Join) > 0 {
-		svc.qtb.relationsMapper(api.Join, tx)
+	if len(api.Preloads) > 0 {
+		svc.qtb.relationsMapper(api.Preloads, tx)
+	}
+
+	if len(api.Joins) > 0 {
+		svc.qtb.joinsMapper(api.Joins, tx)
 	}
 
 	if len(api.Filter) > 0 {
@@ -101,8 +105,12 @@ func (svc *service[T]) FindOne(api GetAllRequest) (*T, error) {
 		fields := strings.Split(api.Fields, ",")
 		tx.Select(fields)
 	}
-	if len(api.Join) > 0 {
-		svc.qtb.relationsMapper(api.Join, tx)
+	if len(api.Preloads) > 0 {
+		svc.qtb.relationsMapper(api.Preloads, tx)
+	}
+
+	if len(api.Joins) > 0 {
+		svc.qtb.joinsMapper(api.Joins, tx)
 	}
 
 	if len(api.Filter) > 0 {
@@ -128,10 +136,12 @@ func (svc *service[T]) Create(data *T) error {
 	return svc.dao.Create(data)
 }
 
+// @TODO need constraints
 func (svc *service[T]) Delete(cond *T) error {
 	return svc.dao.Delete(cond)
 }
 
+// @TODO need constraints
 func (svc *service[T]) Update(cond *T, updatedColumns *T) error {
 	return svc.dao.Update(cond, updatedColumns)
 }

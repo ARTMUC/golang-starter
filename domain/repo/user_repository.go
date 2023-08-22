@@ -1,9 +1,8 @@
 package repo
 
 import (
-	"database/sql"
-	"github.com/golang-starter/db"
-	"github.com/golang-starter/domain/baserepo"
+	"github.com/golang-starter/core/baserepo"
+	"github.com/golang-starter/core/db"
 	"github.com/golang-starter/domain/models"
 )
 
@@ -16,10 +15,10 @@ type userRepo[T any] struct {
 	baserepo.Repository[T]
 }
 
-func (u *userRepo[T]) FindOneByName(name string) (user *models.User, err error) {
-	err = u.DB.Where("user.name = ?", name).First(user).Error
-	if err != nil {
-		return nil, sql.ErrNoRows
+func (u *userRepo[T]) FindOneByName(name string) (*models.User, error) {
+	user := &models.User{}
+	if err := u.DB.Where("username = ?", name).First(user).Error; err != nil {
+		return nil, err
 	}
 	return user, nil
 }

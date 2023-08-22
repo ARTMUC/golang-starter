@@ -1,6 +1,8 @@
 package auth
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/pkg/httperr"
 	"github.com/golang-starter/pkg/jwt"
@@ -20,7 +22,10 @@ func (c *Controller[T]) signin(ctx *gin.Context) (any, error) {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(input.Password), []byte(user.Password)); err != nil {
+	bytes, _ := json.Marshal(user)
+	fmt.Println(string(bytes))
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password)); err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 

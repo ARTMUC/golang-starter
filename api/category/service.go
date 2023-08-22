@@ -1,4 +1,4 @@
-package post
+package category
 
 import (
 	"github.com/golang-starter/core/baserepo"
@@ -12,7 +12,7 @@ type Service[T any] struct {
 	repo baserepo.Dao[T]
 }
 
-func NewService[T models.Post](repository repo.PostRepo[T]) crud.Service[T] {
+func NewService[T models.Category](repository repo.CategoryRepo[T]) crud.Service[T] {
 	return &Service[T]{
 		repo:    repository,
 		Service: crud.NewService[T](repository),

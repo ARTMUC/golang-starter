@@ -5,16 +5,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/api"
 	"github.com/golang-starter/container"
-	"github.com/golang-starter/db"
-	"github.com/golang-starter/di"
+	"github.com/golang-starter/core/db"
+	"github.com/golang-starter/core/di"
+	router2 "github.com/golang-starter/core/router"
+	"github.com/golang-starter/docs/docsgenerator"
 	"github.com/golang-starter/domain/models"
 	"github.com/golang-starter/domain/repo"
 	"github.com/golang-starter/middlewares"
-	"github.com/golang-starter/router"
 	"github.com/golang-starter/validator"
 	"github.com/joho/godotenv"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"os"
 )
@@ -31,6 +30,7 @@ func main() {
 	}
 	server := gin.New()
 	server.Use(gin.Recovery())
+	server.Use(middlewares.LoggerMiddleware())
 	server.Use(middlewares.ErrorHandler())
 
 	config := cors.DefaultConfig()
@@ -57,10 +57,6 @@ func main() {
 
 	log.Println("server started")
 
-	server.GET("", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{"message": "ok 5"})
-	})
-
 	//migrations
 	//db.AddUUIDExtension()
 	if err := db.DB.AutoMigrate(
@@ -72,7 +68,6 @@ func main() {
 	}
 
 	var allDependencies = [][]interface{}{
-		router.GetProviders(),
 		repo.GetProviders(),
 		api.GetProviders(),
 	}
@@ -83,18 +78,15 @@ func main() {
 		}
 	}
 
-	apiRouter := di.MustGet(container.Container, &router.Routes{})
+	apiRouter := router2.NewRoutes()
+	for _, controller := range api.Controllers {
+		apiRouter.AddController(controller)
+	}
 	apiRouter.RegisterRoutes(server)
 
+	docsgenerator.GenerateDocs(di.GetMany[any](container.Container, api.Controllers))
+
 	//server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	//server.Static("/swagger", "./swagger")
-
-	//server.GET("/swagger", func(c *gin.Context) {
-	//	c.HTML(200, "swagger/index.html", gin.H{})
-	//})
 
 	err := server.Run(":8081")
 	if err != nil {

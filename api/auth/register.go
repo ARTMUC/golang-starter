@@ -1,10 +1,12 @@
 package auth
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-starter/pkg/httperr"
 	"golang.org/x/crypto/bcrypt"
 	"html"
+	"reflect"
 	"strings"
 )
 
@@ -20,9 +22,12 @@ func (c *Controller[T]) register(ctx *gin.Context) (any, error) {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}
 	user := &T{
-		Username: string(hashedPassword),
-		Password: html.EscapeString(strings.TrimSpace(input.Username)),
+		Username: html.EscapeString(strings.TrimSpace(input.Username)),
+		Password: string(hashedPassword),
 	}
+
+	fmt.Println(reflect.TypeOf(user))
+
 	if err = c.userRepository.Create(user); err != nil {
 		return nil, httperr.NewBadRequestError(err.Error(), err)
 	}

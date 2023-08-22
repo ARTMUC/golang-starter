@@ -1,26 +1,26 @@
-package router
+package docsgenerator
 
 import (
 	"fmt"
+	"github.com/golang-starter/core/router"
 	"io/ioutil"
 	"reflect"
 	"strings"
 )
 
-func generateDocs(controllers []interface{}) {
+func GenerateDocs(controllers []any) {
 
-	filename := "routes/generated_functions.go" // File to save all the functions
+	filename := "crud_generated_docs.go" // File to save all the functions
 
 	var builder strings.Builder
 
-	builder.WriteString("package routes\n\n")
+	builder.WriteString("package main\n\n")
 
 	for _, ctrl := range controllers {
-		controller := ctrl.(Controller)
+		controller := ctrl.(router.Controller)
 		pkgPath := reflect.TypeOf(controller).Elem().PkgPath()
 		pkgParts := strings.Split(pkgPath, "/")
 		pkgName := pkgParts[len(pkgParts)-1]
-		fmt.Println("pkg name", pkgName)
 
 		baseUrl := controller.MainPath()
 
@@ -92,8 +92,6 @@ func generateDocs(controllers []interface{}) {
 		err := saveToFile(filename, builder.String())
 		if err != nil {
 			fmt.Printf("Error saving file '%s': %v\n", filename, err)
-		} else {
-			fmt.Printf("File '%s' saved successfully.\n", filename)
 		}
 
 	}

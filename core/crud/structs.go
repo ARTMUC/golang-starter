@@ -14,14 +14,15 @@ type PaginationResponse[T any] struct {
 }
 
 type GetAllRequest struct {
-	Page   int                    `json:"page" form:"page"`
-	Limit  int                    `json:"limit" form:"limit"`
-	Join   string                 `json:"join" form:"join"`
-	S      string                 `json:"s" form:"s"`
-	C      map[string]interface{} `json:"c" form:"c"`
-	Fields string                 `json:"fields" form:"fields"`
-	Filter []string               `json:"filter" form:"filter"`
-	Sort   []string               `json:"sort" form:"sort"`
+	Joins    []string               `json:"-" form:"-"`
+	Page     int                    `json:"page" form:"page"`
+	Limit    int                    `json:"limit" form:"limit"`
+	Preloads string                 `json:"join" form:"join"`
+	S        string                 `json:"s" form:"s"`
+	C        map[string]interface{} `json:"c" form:"c"`
+	Fields   string                 `json:"fields" form:"fields"`
+	Filter   []string               `json:"filter" form:"filter"`
+	Sort     []string               `json:"sort" form:"sort"`
 }
 
 var filterConditions = map[string]string{

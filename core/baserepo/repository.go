@@ -4,6 +4,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type Identifiable interface {
+	SetID()
+}
+
 type Dao[T any] interface {
 	FindOne(cond *T, dest *T) error
 	Update(cond *T, updatedColumns *T) error
@@ -33,9 +37,16 @@ func (r *Repository[T]) Delete(cond *T) error {
 }
 
 func (r *Repository[T]) Create(data *T) error {
+	r.setID(data)
 	return r.DB.Create(data).Error
 }
 
 func (r *Repository[T]) GetTx() *gorm.DB {
 	return r.DB.Model(r.Model)
+}
+
+func (r *Repository[T]) setID(data any) {
+	if withID, ok := data.(Identifiable); ok {
+		withID.SetID()
+	}
 }
