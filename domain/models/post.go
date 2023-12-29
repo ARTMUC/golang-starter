@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/golang-starter/core/basemodel"
 	"github.com/google/uuid"
+	"golang-starter/core/basemodel"
 )
 
 type Post struct {

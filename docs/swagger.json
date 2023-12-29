@@ -131,7 +131,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/crud.PaginationResponse[github.com/golang-starter/domain/models.Post]"
+              "$ref": "#/definitions/crud.PaginationResponse[golang-starter/domain/models.Post]"
             }
           }
         }

@@ -3,7 +3,7 @@ package auth
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/pkg/httperr"
+	"golang-starter/pkg/httperr"
 	"golang.org/x/crypto/bcrypt"
 	"html"
 	"reflect"

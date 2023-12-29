@@ -3,8 +3,8 @@ package crud
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/core/router"
-	"github.com/golang-starter/pkg/httperr"
+	"golang-starter/core/router"
+	"golang-starter/pkg/httperr"
 	"github.com/jinzhu/copier"
 	"math"
 	"net/http"

@@ -1,10 +1,10 @@
 package post
 
 import (
-	"github.com/golang-starter/core/baserepo"
-	"github.com/golang-starter/core/crud"
-	"github.com/golang-starter/domain/models"
-	"github.com/golang-starter/domain/repo"
+	"golang-starter/core/baserepo"
+	"golang-starter/core/crud"
+	"golang-starter/domain/models"
+	"golang-starter/domain/repo"
 )
 
 type Service[T any] struct {

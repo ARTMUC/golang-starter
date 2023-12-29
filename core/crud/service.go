@@ -2,7 +2,7 @@ package crud
 
 import (
 	"encoding/json"
-	"github.com/golang-starter/core/baserepo"
+	"golang-starter/core/baserepo"
 	"gorm.io/gorm"
 	"strings"
 )

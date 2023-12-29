@@ -1,6 +1,6 @@
 package repo
 
-import "github.com/golang-starter/domain/models"
+import "golang-starter/domain/models"
 
 func GetProviders() []interface{} {
 	return []interface{}{

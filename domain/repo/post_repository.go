@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"github.com/golang-starter/core/baserepo"
-	"github.com/golang-starter/core/db"
-	"github.com/golang-starter/domain/models"
+	"golang-starter/core/baserepo"
+	"golang-starter/core/db"
+	"golang-starter/domain/models"
 )
 
 type PostRepo[T any] interface {

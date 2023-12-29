@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/golang-starter/core/basemodel"
+	"golang-starter/core/basemodel"
 )
 
 type User struct {

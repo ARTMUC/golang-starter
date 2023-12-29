@@ -2,10 +2,10 @@ package category
 
 import (
 	"github.com/gin-gonic/gin"
-	crud2 "github.com/golang-starter/core/crud"
-	"github.com/golang-starter/core/router"
-	"github.com/golang-starter/domain/models"
-	"github.com/golang-starter/middlewares"
+	crud2 "golang-starter/core/crud"
+	"golang-starter/core/router"
+	"golang-starter/domain/models"
+	"golang-starter/middlewares"
 )
 
 type ResponseDto = models.Category

@@ -3,9 +3,9 @@ package router
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/container"
-	"github.com/golang-starter/core/di"
-	"github.com/golang-starter/pkg/httperr"
+	"golang-starter/container"
+	"golang-starter/core/di"
+	"golang-starter/pkg/httperr"
 	"net/http"
 	"reflect"
 )

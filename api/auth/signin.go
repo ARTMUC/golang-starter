@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/pkg/httperr"
-	"github.com/golang-starter/pkg/jwt"
+	"golang-starter/pkg/httperr"
+	"golang-starter/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 

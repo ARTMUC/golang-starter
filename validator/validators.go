@@ -5,12 +5,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"github.com/golang-starter/container"
-	"github.com/golang-starter/core/basemodel"
-	"github.com/golang-starter/core/di"
-	"github.com/golang-starter/domain/models"
-	"github.com/golang-starter/domain/repo"
-	"github.com/golang-starter/pkg/jwt"
+	"golang-starter/container"
+	"golang-starter/core/basemodel"
+	"golang-starter/core/di"
+	"golang-starter/domain/models"
+	"golang-starter/domain/repo"
+	"golang-starter/pkg/jwt"
 	"github.com/google/uuid"
 )
 

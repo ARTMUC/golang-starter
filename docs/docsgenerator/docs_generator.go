@@ -2,7 +2,7 @@ package docsgenerator
 
 import (
 	"fmt"
-	"github.com/golang-starter/core/router"
+	"golang-starter/core/router"
 	"io/ioutil"
 	"reflect"
 	"strings"

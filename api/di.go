@@ -1,10 +1,10 @@
 package api
 
 import (
-	"github.com/golang-starter/api/auth"
-	"github.com/golang-starter/api/category"
-	"github.com/golang-starter/api/post"
-	"github.com/golang-starter/domain/models"
+	"golang-starter/api/auth"
+	"golang-starter/api/category"
+	"golang-starter/api/post"
+	"golang-starter/domain/models"
 )
 
 func GetProviders() []interface{} {

@@ -3,7 +3,7 @@ package middlewares
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/pkg/jwt"
+	"golang-starter/pkg/jwt"
 	"net/http"
 )
 

@@ -2,9 +2,9 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/core/router"
-	"github.com/golang-starter/domain/models"
-	"github.com/golang-starter/domain/repo"
+	"golang-starter/core/router"
+	"golang-starter/domain/models"
+	"golang-starter/domain/repo"
 	"net/http"
 )
 

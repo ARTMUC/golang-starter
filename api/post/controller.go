@@ -2,11 +2,11 @@ package post
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/golang-starter/core/crud"
-	"github.com/golang-starter/core/router"
-	"github.com/golang-starter/domain/models"
-	"github.com/golang-starter/middlewares"
-	"github.com/golang-starter/pkg/jwt"
+	"golang-starter/core/crud"
+	"golang-starter/core/router"
+	"golang-starter/domain/models"
+	"golang-starter/middlewares"
+	"golang-starter/pkg/jwt"
 )
 
 type ResponseDto = models.Post
